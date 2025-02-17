@@ -4,19 +4,19 @@ fun main() {
 
     // dados para testes da árvore
     // raiz
-    var maria = Familiar("Maria")
+    var maria = Familiar("Maria", 12)
 
 //     pais de Maria
-    var joao = Familiar("João")
-    var julia = Familiar("Júlia")
+    var joao = Familiar("João", 30)
+    var julia = Familiar("Júlia", 32)
 
 //     pais de João
-    var amanda = Familiar("Amanda")
-    var carlos = Familiar("Carlos")
+    var amanda = Familiar("Amanda", 61)
+    var carlos = Familiar("Carlos", 65)
 
 //     pais de Julia
-    var jose = Familiar("José")
-    var fernanda = Familiar("Fernanda")
+    var jose = Familiar("José", 57)
+    var fernanda = Familiar("Fernanda", 60)
 
 //     inserindo raiz e pais da raiz
     arvore.inserir(maria.nome, maria, mutableListOf(joao, julia))

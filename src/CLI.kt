@@ -90,6 +90,8 @@ class CLI(var arvore: ArvoreGenealogica<Familiar>) {
         val nivelEncontrado = arvore.obterNivel(arvore.raiz, nomeFamiliar)
         if (noEncontrado != null) {
             arvore.imprimirRelacionamentos(arvore.raiz, nomeFamiliar, 0, mutableSetOf(), nivelEncontrado, noEncontrado)
+            return
         }
+        println("Familiar não encontrado na árvore!")
     }
 }

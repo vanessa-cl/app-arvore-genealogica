@@ -1,6 +1,7 @@
-data class Familiar(val nome: String) {
+data class Familiar(val nome: String, val idade: Int? = null) {
 
     override fun toString(): String {
-        return nome
+        val imprimirIdade = if (idade != null) "Idade: $idade" else ""
+        return "Nome: $nome, $imprimirIdade"
     }
 }
