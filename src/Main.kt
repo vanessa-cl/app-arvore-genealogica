@@ -45,16 +45,5 @@ fun main() {
     arvore.inserir(arnobio, mutableListOf(helena, carlos))
 
     cli.exibirMenu()
-
-//    println(arvore.raiz)
-
-//    arvore.emOrdemRecursivo(arvore.raiz)
-//    arvore.buscarNoEImprimir(arvore.raiz, "Vanessa")
-//    arvore.imprimirNosRegistrados()
-}//    noPai.conjuge = noMae
-//    noMae.conjuge = noPai
-//    noPai.filhos = mutableListOf(noFilho, noFilha)
-//    noMae.filhos = mutableListOf(noFilho, noFilha)
-//    noFilho.pais =  mutableListOf(noPai, noMae)
-//    noFilha.pais =  mutableListOf(noPai, noMae)
+}
 

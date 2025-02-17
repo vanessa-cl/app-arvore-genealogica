@@ -18,7 +18,7 @@ class CLI(var arvore: ArvoreGenealogica) {
                 2 - Buscar um familiar na árvore
                 3 - Remover um familiar da árvore
                 4 - Visualizar a árvore
-                5 - Imprimir um relacionamento familiar
+                5 - Visualizar relacionamentos de um familiar
                 6 - Encerrar o programa
                 ___________________________________________________________
                 """.trimIndent()
@@ -26,14 +26,15 @@ class CLI(var arvore: ArvoreGenealogica) {
             opcao = readln().toInt()
             when (opcao) {
                 1 -> adicionarFamiliar()
-                2 -> println("2")
+                2 -> buscarFamiliar()
                 3 -> removerFamiliar()
                 4 -> arvore.imprimirArvore(arvore.raiz)
-                5 -> println("5")
+                5 -> visualizarRelacionamentos()
                 6 -> {
                     encerrar = true
                     println("Encerrando o programa...")
                 }
+
                 7 -> arvore.imprimirNosRegistrados()
                 else -> println("Opção inválida! Tente novamente.")
             }
@@ -63,6 +64,23 @@ class CLI(var arvore: ArvoreGenealogica) {
             return println("Erro ao remover familiar da árvore!")
         }
         println("Familiar e descendentes removidos com sucesso!")
-//        arvore.imprimirNosRegistrados()
+    }
+
+    fun buscarFamiliar() {
+        println("Digite o nome do familiar que deseja buscar: ")
+        val nomeBusca = readln()
+        val familiarExistente = arvore.buscarNo(arvore.raiz, nomeBusca)
+        if (familiarExistente != null) {
+            println("Familiar encontrado: ")
+            println(familiarExistente.toString())
+            return
+        }
+        println("Familiar não encontrado na árvore!")
+    }
+
+    fun visualizarRelacionamentos() {
+        println("Digite o nome do familiar que deseja consultar: ")
+        val nomeFamiliar = readln()
+//        arvore.imprimirRelacionamentos(arvore.raiz, nomeFamiliar)
     }
 }
