@@ -49,6 +49,13 @@ class ArvoreGenealogica<T : Any> {
                     var noPaiExistente = buscarNo(raiz, pai.nome) ?: criarNo(pai)
 
                     if (noPaiExistente != null) {
+                        for (filho in noPaiExistente.filhos) {
+                            if (filho != null && ehIrmao(novoNo, filho)) {
+                                if (novoNo != null) {
+                                    println("${novoNo.pessoa} é irmão(ã) de ${filho.pessoa}")
+                                }
+                            }
+                        }
                         if (novoNo !in noPaiExistente.filhos) {
                             noPaiExistente.filhos.add(novoNo)
                         }
@@ -168,9 +175,7 @@ class ArvoreGenealogica<T : Any> {
 
         visitados.add(noAtual)
 
-        if (noAtual.pessoa == nome) {
-            return nivel
-        }
+        if (noAtual.pessoa is Familiar && noAtual.pessoa.nome == nome) return nivel
 
         for (filho in noAtual.filhos) {
             val nivelFilho = obterNivel(filho, nome, nivel - 1, visitados)
@@ -183,6 +188,52 @@ class ArvoreGenealogica<T : Any> {
         }
 
         return null
+    }
+
+    fun ehIrmao(noBase: No<T>?, noAtual: No<T>?): Boolean {
+        if (noAtual == null || noBase == null) return false
+        for (pai in noBase.pais) {
+            if (pai != null && pai.filhos.contains(noAtual)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun verificaNoPeloNome(noAtual: No<T>?, nome: String): Boolean {
+        if (noAtual != null) {
+            return noAtual.pessoa is Familiar && noAtual.pessoa.nome == nome
+        }
+        return false
+    }
+
+    fun ehAntepassado(noAtual: No<T>?, antepassado: No<T>?): Boolean {
+        if (noAtual == null) return false
+        for (pai in noAtual.pais) {
+            if (pai == antepassado) {
+                return true
+            }
+            if (ehAntepassado(pai, antepassado)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun ehDescendente(noAtual: No<T>?, descendente: No<T>?): Boolean {
+        if (noAtual == null || descendente == null) return false
+        if (noAtual.filhos.contains(descendente)) return true
+
+        for (filho in noAtual.filhos) {
+            if (filho == descendente) {
+                return true
+            }
+            if (ehDescendente(filho, descendente)) {
+                return true
+            }
+        }
+
+        return false
     }
 
 
@@ -201,8 +252,17 @@ class ArvoreGenealogica<T : Any> {
 
         if (nivelBase != null) {
             val relacionamento = when {
-                nivel == nivelBase && noAtual.pessoa != nome -> return
-                nivel == nivelBase -> "Eu"
+                nivel == nivelBase && verificaNoPeloNome(noAtual, nome) -> "Eu"
+                nivel == nivelBase && !verificaNoPeloNome(noAtual, nome) && ehIrmao(
+                    noBase,
+                    noAtual
+                ) -> "Irmão/Irmã"
+
+                nivel == nivelBase && !verificaNoPeloNome(noAtual, nome) && !ehIrmao(
+                    noBase,
+                    noAtual
+                ) && !noBase.pais.contains(noAtual) && !noBase.filhos.contains(noAtual) -> "Cônjuge"
+
                 nivel == nivelBase.plus(1) -> "Pai/Mãe"
                 nivel == nivelBase.plus(2) -> "Avô/Avó"
                 nivel == nivelBase.plus(3) -> "Bisavô/Bisavó"
@@ -217,19 +277,30 @@ class ArvoreGenealogica<T : Any> {
             println("$relacionamento: ${noAtual.pessoa}")
         }
 
-
         for (pai in noAtual.pais) {
-            if (nivelBase != null) {
-                if ((nivelBase + nivel) >= 2 && !noBase.filhos.contains(pai) && nivel == 0) {
+            if (!verificaNoPeloNome(noAtual, nome) && pai != null && nivel != nivelBase) {
+                if (ehAntepassado(noAtual, pai)) {
+                    imprimirRelacionamentos(pai, nome, nivel + 1, visitados, nivelBase, noBase)
+                } else {
                     continue
                 }
             }
-            if (nivel == nivelBase && noAtual.pessoa != nome) {
-                return
+            if (!verificaNoPeloNome(noAtual, nome) && pai != null && nivel == nivelBase) {
+                continue
             }
             imprimirRelacionamentos(pai, nome, nivel + 1, visitados, nivelBase, noBase)
         }
         for (filho in noAtual.filhos) {
+            if (!verificaNoPeloNome(noAtual, nome) && filho != null && nivel != nivelBase) {
+                if (ehDescendente(noAtual, filho)) {
+                    imprimirRelacionamentos(filho, nome, nivel - 1, visitados, nivelBase, noBase)
+                } else {
+                    continue
+                }
+            }
+            if (!verificaNoPeloNome(noAtual, nome) && filho != null && nivel == nivelBase) {
+                continue
+            }
             imprimirRelacionamentos(filho, nome, nivel - 1, visitados, nivelBase, noBase)
         }
 

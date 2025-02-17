@@ -87,7 +87,9 @@ class CLI(var arvore: ArvoreGenealogica<Familiar>) {
         println("Digite o nome do familiar que deseja consultar: ")
         val nomeFamiliar = readln()
         val noEncontrado = arvore.buscarNo(arvore.raiz, nomeFamiliar)
+
         val nivelEncontrado = arvore.obterNivel(arvore.raiz, nomeFamiliar)
+        println("nivelEncontrado: " + nivelEncontrado)
         if (noEncontrado != null) {
             arvore.imprimirRelacionamentos(arvore.raiz, nomeFamiliar, 0, mutableSetOf(), nivelEncontrado, noEncontrado)
             return

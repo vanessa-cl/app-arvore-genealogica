@@ -5,6 +5,7 @@ fun main() {
     // dados para testes da árvore
     // raiz
     var maria = Familiar("Maria", 12)
+    var joana = Familiar("Joana", 6)
 
 //     pais de Maria
     var joao = Familiar("João", 30)
@@ -21,8 +22,8 @@ fun main() {
 //     inserindo raiz e pais da raiz
     arvore.inserir(maria.nome, maria, mutableListOf(joao, julia))
     arvore.inserir(joao.nome, joao, mutableListOf(amanda, carlos))
-
     arvore.inserir(julia.nome, julia, mutableListOf(jose, fernanda))
+    arvore.inserir(joana.nome, joana, mutableListOf(joao, julia))
 
     // pais de Amanda
     var clarice = Familiar("Clarice")
@@ -45,6 +46,8 @@ fun main() {
     arvore.inserir(carlos.nome, carlos, mutableListOf(helena, pedro))
     arvore.inserir(jose.nome, jose, mutableListOf(juliana, renato))
     arvore.inserir(fernanda.nome, fernanda, mutableListOf(ana, rafael))
+    var testeNo = arvore.buscarNo(arvore.raiz, "Joana")
+    println("Joana é irmã de Maria: " + arvore.ehIrmao(arvore.raiz, testeNo))
 
     cli.exibirMenu()
 }
