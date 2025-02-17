@@ -136,36 +136,27 @@ class ArvoreGenealogica<T : Any> {
         }
     }
 
-    fun remover(noAtual: No<T>?, nome: String): Boolean {
+    fun remover(noAtual: No<T>?): Boolean {
         if (noAtual == null) return false
 
-        if (noAtual == raiz) {
-            if (noAtual.pessoa == nome) {
-                raiz = noAtual
-            } else {
-                raiz = noAtual.pais[0]
-            }
+        nosRegistrados.remove(noAtual)
+
+        noAtual.pais.forEach { pai ->
+            pai?.filhos?.remove(noAtual)
         }
 
         val filhosCopia = noAtual.filhos.toList()
-        for (filho in filhosCopia) {
-            if (filho != null && noAtual.pessoa == nome) {
-                filho.pais.remove(noAtual)
-            }
-            if (filho != null && filho.pais.size < 1) {
-                remover(filho, nome)
+        filhosCopia.forEach { filho ->
+            filho?.pais?.remove(noAtual)
+            if (filho != null) {
+
+                remover(filho)
             }
         }
 
-        val paisCopia = noAtual.pais.toList()
-        for (pai in paisCopia) {
-            if (noAtual.pessoa == nome) {
-                pai?.filhos?.remove(noAtual)
-            }
+        if (noAtual == raiz) {
+            raiz = noAtual.pais.firstOrNull() ?: noAtual.filhos.firstOrNull()
         }
-
-        noAtual.filhos.clear()
-        noAtual.pais.clear()
 
         return true
     }
@@ -235,7 +226,6 @@ class ArvoreGenealogica<T : Any> {
 
         return false
     }
-
 
     fun imprimirRelacionamentos(
         noAtual: No<T>?,
