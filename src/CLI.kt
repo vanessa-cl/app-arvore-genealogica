@@ -1,4 +1,4 @@
-class CLI(var arvore: ArvoreGenealogica) {
+class CLI(var arvore: ArvoreGenealogica<Familiar>) {
 
     fun exibirMenu() {
         var opcao = 0
@@ -52,7 +52,12 @@ class CLI(var arvore: ArvoreGenealogica) {
         println("Digite o nome da mãe do novo membro: ")
         val maeNovoMembro = readln()
 
-        arvore.inserir(novoMembro, mutableListOf(Familiar(paiNovoMembro), Familiar(maeNovoMembro)))
+        val sucesso = arvore.inserir(nome, novoMembro, mutableListOf(Familiar(paiNovoMembro), Familiar(maeNovoMembro)))
+        if (!sucesso) {
+            println("Erro ao adicionar novo membro!")
+            return
+        }
+        println("Novo membro adicionado com sucesso!")
     }
 
     fun removerFamiliar() {

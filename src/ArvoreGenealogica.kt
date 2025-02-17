@@ -1,18 +1,18 @@
 import java.util.*
 
-class ArvoreGenealogica {
-    private val nosRegistrados: MutableList<No?> = mutableListOf()
-    var raiz: No? = null
+class ArvoreGenealogica<T : Any> {
+    private val nosRegistrados: MutableList<No<T>?> = mutableListOf()
+    var raiz: No<T>? = null
 
-    fun criarNo(familiar: Familiar): No? {
-        var noCriado = No(familiar)
+    fun criarNo(dado: T): No<T>? {
+        var noCriado = No(dado)
         nosRegistrados.add(noCriado)
         return noCriado
     }
 
-    fun buscarNo(noAtual: No?, nome: String, visitados: MutableSet<No> = mutableSetOf()): No? {
+    fun buscarNo(noAtual: No<T>?, nome: String, visitados: MutableSet<No<T>> = mutableSetOf()): No<T>? {
         if (noAtual == null || noAtual in visitados) return null
-        if (noAtual.familiar.nome == nome) return noAtual
+        if (noAtual.pessoa is Familiar && noAtual.pessoa.nome == nome) return noAtual
 
         visitados.add(noAtual)
 
@@ -30,30 +30,33 @@ class ArvoreGenealogica {
     }
 
     fun inserir(
-        familiar: Familiar,
-        pais: List<Familiar> = emptyList(),
-        filhos: List<Familiar> = emptyList(),
-    ) {
-        val novoNo = buscarNo(raiz, familiar.nome) ?: criarNo(familiar)
+        nome: String,
+        dado: T,
+        pais: List<T> = emptyList(),
+        filhos: List<T> = emptyList(),
+    ): Boolean {
+        val novoNo = buscarNo(raiz, nome) ?: criarNo(dado)
 
         if (raiz == null) {
             raiz = novoNo
-        } else if (raiz?.familiar?.nome == familiar.nome) {
-            return
+        } else if (raiz?.pessoa == nome) {
+            return false
         }
 
         if (pais.isNotEmpty()) {
             for (pai in pais) {
-                var noPaiExistente = buscarNo(raiz, pai.nome) ?: criarNo(pai)
+                if (pai is Familiar) {
+                    var noPaiExistente = buscarNo(raiz, pai.nome) ?: criarNo(pai)
 
-                if (noPaiExistente != null) {
-                    if (novoNo !in noPaiExistente.filhos) {
-                        noPaiExistente.filhos.add(novoNo)
+                    if (noPaiExistente != null) {
+                        if (novoNo !in noPaiExistente.filhos) {
+                            noPaiExistente.filhos.add(novoNo)
+                        }
                     }
-                }
-                if (novoNo != null) {
-                    if (noPaiExistente !in novoNo.pais) {
-                        novoNo.pais.add(noPaiExistente)
+                    if (novoNo != null) {
+                        if (noPaiExistente !in novoNo.pais) {
+                            novoNo.pais.add(noPaiExistente)
+                        }
                     }
                 }
             }
@@ -61,31 +64,34 @@ class ArvoreGenealogica {
 
         if (filhos.isNotEmpty()) {
             for (filho in filhos) {
-                var noFilho = buscarNo(raiz, filho.nome) ?: criarNo(filho)
+                if (filho is Familiar) {
+                    var noFilho = buscarNo(raiz, filho.nome) ?: criarNo(filho)
 
-                if (noFilho != null) {
-                    if (novoNo !in noFilho.pais) {
-                        noFilho.pais.add(novoNo)
+                    if (noFilho != null) {
+                        if (novoNo !in noFilho.pais) {
+                            noFilho.pais.add(novoNo)
+                        }
                     }
-                }
-                if (novoNo != null) {
-                    if (noFilho !in novoNo.filhos) {
-                        novoNo.filhos.add(noFilho)
+                    if (novoNo != null) {
+                        if (noFilho !in novoNo.filhos) {
+                            novoNo.filhos.add(noFilho)
+                        }
                     }
                 }
             }
         }
+        return true
     }
 
-    fun imprimirArvore(raiz: No?) {
+    fun imprimirArvore(raiz: No<T>?) {
         if (raiz == null) {
             println("A árvore está vazia.")
             return
         }
 
-        val fila: Queue<Pair<No, Int>> = LinkedList()
+        val fila: Queue<Pair<No<T>, Int>> = LinkedList()
         val niveis = mutableMapOf<Int, MutableList<String>>()
-        val visitados = mutableSetOf<No>()
+        val visitados = mutableSetOf<No<T>>()
 
         fila.add(raiz to 0)
         visitados.add(raiz)
@@ -93,7 +99,7 @@ class ArvoreGenealogica {
         while (fila.isNotEmpty()) {
             val (noAtual, nivel) = fila.poll()
 
-            niveis.computeIfAbsent(nivel) { mutableListOf() }.add(noAtual.familiar.nome)
+            niveis.computeIfAbsent(nivel) { mutableListOf() }.add(noAtual.pessoa.toString())
 
             for (pai in noAtual.pais) {
                 if (pai != null && pai !in visitados) {
@@ -119,15 +125,15 @@ class ArvoreGenealogica {
     fun imprimirNosRegistrados() {
         println(nosRegistrados.size)
         for (no in nosRegistrados) {
-            println(no.toString())
+            println(no)
         }
     }
 
-    fun remover(noAtual: No?, nome: String): Boolean {
+    fun remover(noAtual: No<T>?, nome: String): Boolean {
         if (noAtual == null) return false
 
         if (noAtual == raiz) {
-            if (noAtual.familiar.nome == nome) {
+            if (noAtual.pessoa == nome) {
                 raiz = noAtual
             } else {
                 raiz = noAtual.pais[0]
@@ -136,7 +142,7 @@ class ArvoreGenealogica {
 
         val filhosCopia = noAtual.filhos.toList()
         for (filho in filhosCopia) {
-            if (filho != null && noAtual.familiar.nome == nome) {
+            if (filho != null && noAtual.pessoa == nome) {
                 filho.pais.remove(noAtual)
             }
             if (filho != null && filho.pais.size < 1) {
@@ -146,7 +152,7 @@ class ArvoreGenealogica {
 
         val paisCopia = noAtual.pais.toList()
         for (pai in paisCopia) {
-            if (noAtual.familiar.nome == nome) {
+            if (noAtual.pessoa == nome) {
                 pai?.filhos?.remove(noAtual)
             }
         }
@@ -157,12 +163,12 @@ class ArvoreGenealogica {
         return true
     }
 
-    fun obterNivel(noAtual: No?, nome: String, nivel: Int = 0, visitados: MutableSet<No> = mutableSetOf()): Int? {
+    fun obterNivel(noAtual: No<T>?, nome: String, nivel: Int = 0, visitados: MutableSet<No<T>> = mutableSetOf()): Int? {
         if (noAtual == null || noAtual in visitados) return null
 
         visitados.add(noAtual)
 
-        if (noAtual.familiar.nome == nome) {
+        if (noAtual.pessoa == nome) {
             return nivel
         }
 
@@ -181,12 +187,12 @@ class ArvoreGenealogica {
 
 
     fun imprimirRelacionamentos(
-        noAtual: No?,
+        noAtual: No<T>?,
         nome: String,
         nivel: Int = 0,
-        visitados: MutableSet<No> = mutableSetOf(),
+        visitados: MutableSet<No<T>> = mutableSetOf(),
         nivelBase: Int?,
-        noBase: No
+        noBase: No<T>
     ) {
         if (noAtual == null) return
         if (noAtual in visitados) return
@@ -195,7 +201,7 @@ class ArvoreGenealogica {
 
         if (nivelBase != null) {
             val relacionamento = when {
-                nivel == nivelBase && noAtual.familiar.nome != nome -> return
+                nivel == nivelBase && noAtual.pessoa != nome -> return
                 nivel == nivelBase -> "Eu"
                 nivel == nivelBase.plus(1) -> "Pai/Mãe"
                 nivel == nivelBase.plus(2) -> "Avô/Avó"
@@ -208,7 +214,7 @@ class ArvoreGenealogica {
                 nivel == nivelBase.minus(4) -> "Tataraneto/Tataraneta"
                 else -> "Descendente de nível ${-nivel}"
             }
-            println("$relacionamento: ${noAtual.familiar.nome}")
+            println("$relacionamento: ${noAtual.pessoa}")
         }
 
 
@@ -218,7 +224,7 @@ class ArvoreGenealogica {
                     continue
                 }
             }
-            if (nivel == nivelBase && noAtual.familiar.nome != nome) {
+            if (nivel == nivelBase && noAtual.pessoa != nome) {
                 return
             }
             imprimirRelacionamentos(pai, nome, nivel + 1, visitados, nivelBase, noBase)

@@ -1,28 +1,28 @@
 fun main() {
-    var arvore = ArvoreGenealogica()
+    var arvore = ArvoreGenealogica<Familiar>()
     var cli = CLI(arvore)
 
     // dados para testes da árvore
     // raiz
     var maria = Familiar("Maria")
 
-    // pais de Maria
+//     pais de Maria
     var joao = Familiar("João")
     var julia = Familiar("Júlia")
 
-    // pais de João
+//     pais de João
     var amanda = Familiar("Amanda")
     var carlos = Familiar("Carlos")
 
-    // pais de Julia
+//     pais de Julia
     var jose = Familiar("José")
     var fernanda = Familiar("Fernanda")
 
-    // inserindo raiz e pais da raiz
-    arvore.inserir(maria, mutableListOf(joao, julia))
+//     inserindo raiz e pais da raiz
+    arvore.inserir(maria.nome, maria, mutableListOf(joao, julia))
+    arvore.inserir(joao.nome, joao, mutableListOf(amanda, carlos))
 
-    arvore.inserir(joao, mutableListOf(amanda, carlos))
-    arvore.inserir(julia, mutableListOf(jose, fernanda))
+    arvore.inserir(julia.nome, julia, mutableListOf(jose, fernanda))
 
     // pais de Amanda
     var clarice = Familiar("Clarice")
@@ -41,10 +41,10 @@ fun main() {
     var rafael = Familiar("Rafael")
 
 
-    arvore.inserir(amanda, mutableListOf(clarice, ricardo))
-    arvore.inserir(carlos, mutableListOf(helena, pedro))
-    arvore.inserir(jose, mutableListOf(juliana, renato))
-    arvore.inserir(fernanda, mutableListOf(ana, rafael))
+    arvore.inserir(amanda.nome, amanda, mutableListOf(clarice, ricardo))
+    arvore.inserir(carlos.nome, carlos, mutableListOf(helena, pedro))
+    arvore.inserir(jose.nome, jose, mutableListOf(juliana, renato))
+    arvore.inserir(fernanda.nome, fernanda, mutableListOf(ana, rafael))
 
     cli.exibirMenu()
 }

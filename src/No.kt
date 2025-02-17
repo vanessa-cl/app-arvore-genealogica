@@ -1,10 +1,10 @@
-data class No(val familiar: Familiar) {
-    var pais: MutableList<No?> = mutableListOf()
-    var filhos: MutableList<No?> = mutableListOf()
+data class No<T>(val pessoa: T? = null) {
+    var pais: MutableList<No<T>?> = mutableListOf()
+    var filhos: MutableList<No<T>?> = mutableListOf()
 
     override fun toString(): String {
-        val paisNomes = pais.joinToString { it?.familiar?.nome.toString() }
-        val filhosNomes = filhos.joinToString { it?.familiar?.nome.toString() }
-        return "No(${familiar.nome}) → Pais: [$paisNomes], Filhos: [$filhosNomes]"
+        val paisNomes = pais.joinToString { it?.pessoa.toString() }
+        val filhosNomes = filhos.joinToString { it?.pessoa.toString() }
+        return "No(${pessoa}) → Pais: [$paisNomes], Filhos: [$filhosNomes]"
     }
 }
