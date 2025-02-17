@@ -157,4 +157,76 @@ class ArvoreGenealogica {
         return true
     }
 
+    fun obterNivel(noAtual: No?, nome: String, nivel: Int = 0, visitados: MutableSet<No> = mutableSetOf()): Int? {
+        if (noAtual == null || noAtual in visitados) return null
+
+        visitados.add(noAtual)
+
+        if (noAtual.familiar.nome == nome) {
+            return nivel
+        }
+
+        for (filho in noAtual.filhos) {
+            val nivelFilho = obterNivel(filho, nome, nivel - 1, visitados)
+            if (nivelFilho != null) return nivelFilho
+        }
+
+        for (pai in noAtual.pais) {
+            val nivelPai = obterNivel(pai, nome, nivel + 1, visitados)
+            if (nivelPai != null) return nivelPai
+        }
+
+        return null
+    }
+
+
+    fun imprimirRelacionamentos(
+        noAtual: No?,
+        nome: String,
+        nivel: Int = 0,
+        visitados: MutableSet<No> = mutableSetOf(),
+        nivelBase: Int?,
+        noBase: No
+    ) {
+        if (noAtual == null) return
+        if (noAtual in visitados) return
+
+        visitados.add(noAtual)
+
+        if (nivelBase != null) {
+            val relacionamento = when {
+                nivel == nivelBase && noAtual.familiar.nome != nome -> return
+                nivel == nivelBase -> "Eu"
+                nivel == nivelBase.plus(1) -> "Pai/Mãe"
+                nivel == nivelBase.plus(2) -> "Avô/Avó"
+                nivel == nivelBase.plus(3) -> "Bisavô/Bisavó"
+                nivel == nivelBase.plus(4) -> "Tataravô/Tataravó"
+                nivel > nivelBase.plus(4) -> "Antepassado de nível $nivel"
+                nivel == nivelBase.minus(1) -> "Filho/Filha"
+                nivel == nivelBase.minus(2) -> "Neto/Neta"
+                nivel == nivelBase.minus(3) -> "Bisneto/Bisneta"
+                nivel == nivelBase.minus(4) -> "Tataraneto/Tataraneta"
+                else -> "Descendente de nível ${-nivel}"
+            }
+            println("$relacionamento: ${noAtual.familiar.nome}")
+        }
+
+
+        for (pai in noAtual.pais) {
+            if (nivelBase != null) {
+                if ((nivelBase + nivel) >= 2 && !noBase.filhos.contains(pai) && nivel == 0) {
+                    continue
+                }
+            }
+            if (nivel == nivelBase && noAtual.familiar.nome != nome) {
+                return
+            }
+            imprimirRelacionamentos(pai, nome, nivel + 1, visitados, nivelBase, noBase)
+        }
+        for (filho in noAtual.filhos) {
+            imprimirRelacionamentos(filho, nome, nivel - 1, visitados, nivelBase, noBase)
+        }
+
+    }
+
 }
