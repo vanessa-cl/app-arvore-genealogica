@@ -2,52 +2,44 @@ fun main() {
     var arvore = ArvoreGenealogica<Familiar>()
     var cli = CLI(arvore)
 
-    // dados para testes da árvore
-    // raiz
-    var maria = Familiar("Maria", 12)
-    var joana = Familiar("Joana", 6)
+    var jean = Familiar("Jean Eu")
 
-//     pais de Maria
-    var joao = Familiar("João", 30)
-    var julia = Familiar("Júlia", 32)
+    var jerrivan = Familiar("Jerrivan Pai")
+    var eliane = Familiar("Eliane Mãe")
 
-//     pais de João
-    var amanda = Familiar("Amanda", 61)
-    var carlos = Familiar("Carlos", 65)
+    var eli = Familiar("Eli Tia")
+    var isis = Familiar("Isis Prima")
+    var leo = Familiar("Leo Marido da Tia")
 
-//     pais de Julia
-    var jose = Familiar("José", 57)
-    var fernanda = Familiar("Fernanda", 60)
+    var matildes = Familiar("Maria Matildes Vó Materna")
+    var valter = Familiar("Valter Vô Materno")
 
-//     inserindo raiz e pais da raiz
-    arvore.inserir(maria.nome, maria, mutableListOf(joao, julia))
-    arvore.inserir(joao.nome, joao, mutableListOf(amanda, carlos))
-    arvore.inserir(julia.nome, julia, mutableListOf(jose, fernanda))
-    arvore.inserir(joana.nome, joana, mutableListOf(joao, julia))
+    var carmelita = Familiar("Carmelita Vó Paterna")
+    var joao = Familiar("João Vô Paterno")
 
-    // pais de Amanda
-    var clarice = Familiar("Clarice")
-    var ricardo = Familiar("Ricardo")
-
-    // pais de Carlos
-    var helena = Familiar("Helena")
-    var pedro = Familiar("Pedro")
-
-    // pais de José
-    var juliana = Familiar("Juliana")
-    var renato = Familiar("Renato")
-
-    // pais de Fernanda
-    var ana = Familiar("Ana")
-    var rafael = Familiar("Rafael")
+    arvore.inserir(jean.nome, jean, mutableListOf(jerrivan, eliane))
+    arvore.inserir(jerrivan.nome, jerrivan, mutableListOf(carmelita, joao))
+    arvore.inserir(eliane.nome, eliane, mutableListOf(matildes, valter))
+    arvore.inserir(eli.nome, eli, mutableListOf(matildes, valter))
+    arvore.inserir(isis.nome, isis, mutableListOf(eli, leo))
 
 
-    arvore.inserir(amanda.nome, amanda, mutableListOf(clarice, ricardo))
-    arvore.inserir(carlos.nome, carlos, mutableListOf(helena, pedro))
-    arvore.inserir(jose.nome, jose, mutableListOf(juliana, renato))
-    arvore.inserir(fernanda.nome, fernanda, mutableListOf(ana, rafael))
-    var testeNo = arvore.buscarNo(arvore.raiz, "Joana")
-    println("Joana é irmã de Maria: " + arvore.ehIrmao(arvore.raiz, testeNo))
+    var bisa1 = Familiar("Bisa 1 - Mãe de Maria Matildes")
+    var bisa2 = Familiar("Bisa 2 - Pai de Maria Matildes")
+
+    var bisa3 = Familiar("Bisa 3 - Mãe de Valter")
+    var bisa4 = Familiar("Bisa 4 - Pai de Valter")
+
+    var bisa5 = Familiar("Bisa 5 - Mãe de Carmelita")
+    var bisa6 = Familiar("Bisa 6 - Pai de Carmelita")
+
+    var bisa7 = Familiar("Bisa 7 - Mãe de João")
+    var bisa8 = Familiar("Bisa 8 - Pai de João")
+
+    arvore.inserir(matildes.nome, matildes, mutableListOf(bisa1, bisa2))
+    arvore.inserir(valter.nome, valter, mutableListOf(bisa3, bisa4))
+    arvore.inserir(carmelita.nome, carmelita, mutableListOf(bisa5, bisa6))
+    arvore.inserir(joao.nome, joao, mutableListOf(bisa7, bisa8))
 
     cli.exibirMenu()
 }

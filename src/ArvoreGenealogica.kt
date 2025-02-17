@@ -251,9 +251,8 @@ class ArvoreGenealogica<T : Any> {
                 nivel == nivelBase && !verificaNoPeloNome(noAtual, nome) && !ehIrmao(
                     noBase,
                     noAtual
-                ) && !noBase.pais.contains(noAtual) && !noBase.filhos.contains(noAtual) -> "Cônjuge"
-
-                nivel == nivelBase.plus(1) -> "Pai/Mãe"
+                ) -> "Familiar de mesmo nível"
+                nivel == nivelBase.plus(1) -> "Pai/Mãe ou Tio/Tia"
                 nivel == nivelBase.plus(2) -> "Avô/Avó"
                 nivel == nivelBase.plus(3) -> "Bisavô/Bisavó"
                 nivel == nivelBase.plus(4) -> "Tataravô/Tataravó"
